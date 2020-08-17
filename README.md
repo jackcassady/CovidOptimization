@@ -113,8 +113,8 @@ $Pat\_1_t$ | Number of Severity 1 patients
 
 
 ### 2.A.iv. Minimum Cost Model ###
-<img src="Min Cost Objective 1" width="800">
-<img src="Min Cost Objective 2" width="800">
+<img src="Min Cost Objective 1.png" width="800">
+<img src="Min Cost Objective 2.png" width="800">
 
 ## 2.B. Max Flow Objective ##
 
