@@ -250,3 +250,90 @@ x | P(x)
 4 | 0.1707
 
 <img src="Admitted Patients Distribution.png" width="800">
+
+<img src="Total Patients Distribution.png" width="800">
+
+These probabilities are what can then be used to determine the number of patients in each category of the 41 patients we currently have and the number of patients of each category for new admitted patients. Then the code for our daily demand schedule can be found below. 
+
+'''using Random, StatsBase, NamedArrays
+
+
+# Creating an array of new cases each day based on the statisical data
+new_cases = [rand(6:16) for i in 1:1, j in 1:7] 
+
+# Finding the number of Covid cases that required hospitalization from
+# CDC data 
+hospitalized = round.(Int, new_cases*0.1642) 
+
+# Patients with severity 1 are those who don't need hospitalization
+pat_1 = new_cases - hospitalized 
+
+# Initialize categories of hospitalized patients and probabilities
+items = ["2_Pat", "3_Pat", "4_Pat"]
+weights = [0.6232, 0.206, 0.1707]
+
+# Distribute new cases among our categories
+distr = [sample(items, Weights(weights), i) for i in hospitalized]
+
+# Distribute current cases among our categories
+prior_pats = sample(items, Weights(weights), 41);
+c = countmap(prior_pats)
+
+# Initialize patient category arrays
+pat_2 = zeros(1,7)
+pat_3 = zeros(1,7)
+pat_4 = zeros(1,7)
+
+# Separate patients from new hospitalizations into category arrays
+for i in 1:length(distr)
+    for j in distr[i]
+        if j == "4_Pat"
+            pat_4[i] += 1
+        end
+        if j == "3_Pat"
+            pat_3[i] += 1
+        end
+        if j == "2_Pat"
+            pat_2[i] += 1
+        end
+    end
+end
+
+# Compute total daily patients for severity 3
+count_3 = c["3_Pat"]
+for i in 1:length(pat_3)
+    if pat_3[i] == 0
+        pat_3[i] = count_3
+    else
+        count_3 = count_3 + pat_3[i] 
+        pat_3[i] = count_3
+    end
+end
+
+# Compute total daily patients for severity 4
+count_4 = c["4_Pat"]
+for i in 1:length(pat_4)
+    if pat_4[i] == 0
+        pat_4[i] = count_4
+    else
+        count_4 = count_4 + pat_4[i] 
+        pat_4[i] = count_4
+    end
+end
+
+# Compute total daily patients for severity 2
+count_2 = c["2_Pat"]
+for i in 1:length(pat_2)
+    if pat_2[i] == 0
+        pat_2[i] = count_2
+    else
+        count_2 = count_2 + pat_2[i] 
+        pat_2[i] = count_2
+    end
+end
+
+# Combine categories into full demand schedule
+day = [1, 2, 3, 4, 5, 6, 7]
+sev = [1, 2, 3, 4]
+Patients = [pat_1; pat_2; pat_3; pat_4]
+demand = NamedArray(Patients, (sev, day), ("Severity Level", "Day"))'''
