@@ -249,4 +249,4 @@ x | P(x)
 3 | 0.2061
 4 | 0.1707
 
-<img src="Admitted Patients Distribution">
+<img src="Admitted Patients Distribution" width="400">
