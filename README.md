@@ -346,4 +346,265 @@ Severity Level \ Day | 1 | 2 | 3 | 4 | 5 | 6 | 7
 | 3 | 9 | 9 | 9 | 9 | 9 | 9 | 9 |
 | 4 | 4 | 5 | 5 | 6 | 6| 7 | 8 | 
 
+```
+#####################################
+# MIN COST SET UP
+#####################################
 
+d_cost = 393.69          # Daily cost of each Doctor
+n_cost = 180.47          # Daily cost of each Nurse
+n95_mask_cost = 6.00     # Cost per N95 Mask
+surg_mask_cost = 0.50    # Cost per Surgical Mask
+gown_cost = 4.15         # Cost per Patient Gown
+glove_cost = 0.25        # Cost per Pair of Gloves
+shield_cost = 5.00       # Cost per Face Shield
+vent_cost = 25000.00     # Cost per Ventilator
+fluid_cost = 5.00        # Cost per Unit of Fluids
+staff_gown_cost = 2.00   # Cost per Staff Gown
+
+# Initial amounts of each consumable
+gown_init = 3120
+staff_gown_init = 3120
+glove_init = 39000
+n95_mask_init = 936
+surg_mask_init = 1560
+shield_init = 69
+vent_init = 16
+fluid_init = 339924
+
+# Initial number of Doctors and Nurses
+d_init = 80
+n_init = 160
+
+num_beds = 102 # Total number of beds in hospital
+
+# Required consumables (per patient per day)
+req_gown = 20
+req_staff_gown = 20
+req_glove = 250
+req_n95_mask = 6
+req_surg_mask = 10
+req_fluid = 2179
+
+# Staff needed per patient per day depending on patient severity
+n_req_1 = 4
+n_req_2 = 4
+n_req_3 = 2
+n_req_4 = 2
+d_req_2 = 20
+d_req_3 = 14
+d_req_4 = 14;
+
+#######################################
+# MAX FLOW SET UP
+#######################################
+
+#incidence matrix (rows are nodes, columns are arcs, entries rep arc enters(-1) leaves(1) each node)
+A=[1 0 0 0 0 0 0 0 
+    -1 1 0 0 0 0 0 0
+    0 -1 1 1 0 0 0 0 
+    0 0 -1 0 1 1 0 0
+    0 0 0 0 -1 0 1 0
+    0 0 0 0 0 -1 0 1
+    0 0 0 -1 0 0 -1 -1]
+# add a dummy arc from sink (5) to source (0)
+A = [A [-1;0;0;0;0;0;1]]
+
+
+# supply and demand are all 0
+b = [0, 0, 0, 0, 0, 0,0]
+
+# costs should be 0 on every arc except dummy
+# -1 on dummy arc
+c = [0, 0, 0, 0, 0, 0, 0, 0, -1]
+
+# capacities on each arc. make dummy arc capacity "big enough"
+cap = [50, 50, 50, 6, 17, 30, 50, 50, 50];
+
+using JuMP, Gurobi
+
+###########################################
+# MAX FLOW OBJECTIVE
+###########################################
+
+max_flow = Model(Gurobi.Optimizer)
+set_optimizer_attribute(max_flow, "OutputFlag", 0)
+    
+# variables representing how much flow we send on each arc
+@variable(max_flow, x[1:9] >= 0)
+
+# constraints balance flow into and out of each node
+@constraint(max_flow, A*x .== b)
+
+# don't exceed arc capacity
+@constraint(max_flow, x .<= cap)
+    
+# Find the maximum flow of the system
+@objective(max_flow, Min, sum(c[i]*x[i] for i in 1:9))
+
+
+###########################################
+# MIN COST OBJECTIVE
+###########################################
+
+m = Model(Gurobi.Optimizer)
+set_optimizer_attribute(m, "OutputFlag", 0)
+
+# Gown Variables
+@variable(m, gown[1:7] >= 0)
+@variable(m, gown_order[1:7] >= 0)
+
+# Staff Gown Variables
+@variable(m, staff_gown[1:7] >= 0)
+@variable(m, staff_gown_order[1:7] >= 0)
+
+# Glove Variables
+@variable(m, glove[1:7] >= 0)
+@variable(m, glove_order[1:7] >= 0)
+
+# N95 Mask Variables
+@variable(m, n95_mask[1:7] >= 0)
+@variable(m, n95_mask_order[1:7] >= 0)
+
+# Surgical Mask Variables
+@variable(m, surg_mask[1:7] >= 0)
+@variable(m, surg_mask_order[1:7] >= 0)
+
+# Face Shield Variables
+@variable(m, shield[1:7] >= 0)
+@variable(m, shield_order[1:7] >= 0)
+
+# Ventilator Variables
+@variable(m, vent[1:7] >= 0)
+@variable(m, vent_order[1:7] >= 0)
+
+# Fluid Variables
+@variable(m, fluid[1:7] >= 0)
+@variable(m, fluid_order[1:7] >= 0)
+
+# Doctors and Nurses on shift
+@variable(m, n[1:7] >= 0, Int)
+@variable(m, d[1:7] >= 0, Int)
+
+# Doctors and Nurses added to shift
+@variable(m, n_on[1:7] >= 0)
+@variable(m, d_on[1:7] >= 0)
+
+# Doctors and Nurses taken off of shift
+@variable(m, n_off[1:7] >= 0)
+@variable(m, d_off[1:7] >= 0)
+
+# Number of Admitted Patients must be less than the number of beds
+@constraint(m, bed_constr[day in 1:7], (pat_2[day] + pat_3[day] + pat_4[day]) <= num_beds)
+
+# Nurse Balancing
+@constraint(m, nurse_bal_init, n[1] == n_init + n_on[1] - n_off[1])
+@constraint(m, nurse_bal[day in 2:7], n[day] == n[day-1] + n_on[day] - n_off[day])
+
+# Doctor Balancing
+@constraint(m, doctor_bal_init, d[1] == d_init + d_on[1] - d_off[1])
+@constraint(m, doctor_bal[day in 2:7], d[day] == d[day-1] + d_on[day] - d_off[day])
+
+
+# Doctor and Nurse patient requirements
+
+# Number of Nurses needed per Severity 1 Patient
+@constraint(m, sev_1_n_req[day in 1:7], pat_1[day] <= n_req_1 * n[day]) 
+
+# Number of Nurses needed per Severity 2 Patient
+@constraint(m, sev_2_n_req[day in 1:7], pat_2[day] <= n_req_2 * n[day])  
+
+# Number of Nurses needed per Severity 3 Patient
+@constraint(m, sev_3_n_req[day in 1:7], pat_3[day] <= n_req_3 * n[day])  
+
+# Number of Nurses needed per Severity 4 Patient
+@constraint(m, sev_4_n_req[day in 1:7], pat_4[day] <= n_req_4 * n[day])  
+
+# Number of Doctors needed per Severity 2 Patient
+@constraint(m, sev_2_d_req[day in 1:7], pat_2[day] <= d_req_2 * d[day])  
+
+# Number of Doctors needed per Severity 3 Patient
+@constraint(m, sev_3_d_req[day in 1:7], pat_3[day] <= d_req_3 * d[day]) 
+
+# Number of Doctors needed per Severity 4 Patient
+@constraint(m, sev_4_d_req[day in 1:7], pat_4[day] <= d_req_4 * d[day]) 
+
+# Expressions for Consumable use
+
+@expression(m, gown_use, [req_gown * (pat_2[day] + pat_3[day] + pat_4[day]) for day in 1:7])
+@expression(m, staff_gown_use, [req_staff_gown * (pat_1[day] + pat_2[day] + pat_3[day] + pat_4[day]) for day in 1:7])
+@expression(m, glove_use, [req_glove * (pat_1[day] + pat_2[day] + pat_3[day] + pat_4[day]) for day in 1:7])
+@expression(m, n95_mask_use, [req_n95_mask * (pat_1[day] + pat_2[day] + pat_3[day] + pat_4[day]) for day in 1:7])
+@expression(m, surg_mask_use, [req_surg_mask * (pat_1[day] + pat_2[day] + pat_3[day] + pat_4[day]) for day in 1:7])
+@expression(m, vent_use, [(pat_4[day] + pat_3[day]) for day in 1:7])
+@expression(m, fluid_use, [req_fluid * (pat_2[day] + pat_3[day] + pat_4[day]) for day in 1:7])
+
+# Consumable Inventory Flow Balance
+
+# Balancing Patient Gowns
+@constraint(m, gown_inv_bal_init, gown_init + gown_order[1] == gown_use[1] + gown[1])
+@constraint(m, gown_inv_bal[day in 2:7], gown[day-1] + gown_order[day] == gown_use[day] + gown[day])
+
+# Balancing Staff Gowns
+@constraint(m, staff_gown_inv_bal_init, staff_gown_init + staff_gown_order[1] == staff_gown_use[1] + staff_gown[1])
+@constraint(m, staff_gown_inv_bal[day in 2:7], staff_gown[day-1] + staff_gown_order[day] == staff_gown_use[day] 
+    + staff_gown[day])
+
+# Balancing Gloves
+@constraint(m, glove_inv_bal_init, glove_init + glove_order[1] == glove_use[1] + glove[1])
+@constraint(m, glove_inv_bal[day in 2:7], glove[day-1] + glove_order[day] == glove_use[day] + glove[day])
+
+# Balancing N95 Masks
+@constraint(m, n95_mask_inv_bal_init, n95_mask_init + n95_mask_order[1] == n95_mask_use[1] + n95_mask[1])
+@constraint(m, n95_mask_inv_bal[day in 2:7], n95_mask[day-1] + n95_mask_order[day] == n95_mask_use[day] 
+    + n95_mask[day])
+
+# Balancing Surgical Masks
+@constraint(m, surg_mask_inv_bal_init, surg_mask_init + surg_mask_order[1] == surg_mask_use[1] + surg_mask[1])
+@constraint(m, surg_mask_inv_bal[day in 2:7], surg_mask[day-1] + surg_mask_order[day] == surg_mask_use[day] 
+    + surg_mask[day])
+
+# Balancing Face Shields
+@constraint(m, shield_inv_bal_init, shield_init + shield_order[1] == d[1] + n[1] + shield[1])
+@constraint(m, shield_inv_bal[day in 2:7], shield[day-1] + shield_order[day] == d[day] + n[day] + shield[day])
+
+# Balancing Ventilators
+@constraint(m, vent_inv_bal_init, vent_init + vent_order[1] == vent_use[1] + vent[1])
+@constraint(m, vent_inv_bal[day in 2:7], vent[day-1] + vent_order[day] == vent_use[day] + vent[day])
+
+# Balancing Fluids
+@constraint(m, fluid_inv_bal_init, fluid_init + fluid_order[1] == fluid_use[1] + fluid[1])
+@constraint(m, fluid_inv_bal[day in 2:7], fluid[day-1] + fluid_order[day] == fluid_use[day] + fluid[day])
+
+
+# Objective is to Minimize the Total Cost of Staff and Consumables used 
+@objective(m, Min, d_cost * sum(d) + n_cost * sum(n) + n95_mask_cost * sum(n95_mask_use) + surg_mask_cost * 
+    sum(surg_mask_use) + gown_cost * sum(gown_use) + glove_cost * sum(glove_use) + shield_cost * sum(d + n) + 
+    vent_cost * sum(vent_use) + fluid_cost * sum(fluid_use) + staff_gown_cost * sum(staff_gown_use));
+```
+
+## 4. Results and discussion ##
+
+### 4.A. Max Flow Results ###
+
+========================================
+MAX FLOW OBJECTIVE
+========================================
+
+MAX FLOW
+========================================
+Max flow: 50.0
+Dummy: 50.0
+
+ARC FLOW
+========================================
+These values are per day, how many patients can be helped based on number of ventillators available
+Flow on each arc: 
+    Patients waiting to be seen: 50.0
+    Patients being evaluated by nurse: 50.0
+    Patient Admitted: 47.0
+    Patients Discharged: 3.0
+    Admitted Patients on Ventillators: 17.0
+    Admitted Patients Only in Need of Fluids: 30.0
+    Patients on Ventillators Discharged: 17.0
+    Patients only Needing Fluids Discharged: 30.0
