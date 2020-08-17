@@ -249,4 +249,4 @@ x | P(x)
 3 | 0.2061
 4 | 0.1707
 
-![Admitted Patients Distribution](Admitted Patients Distribution.png "Logo Title Text 1")
+<img src="Admitted Patients Distribution">
