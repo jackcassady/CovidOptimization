@@ -339,7 +339,7 @@ sev = [1, 2, 3, 4]
 Patients = [pat_1; pat_2; pat_3; pat_4]
 demand = NamedArray(Patients, (sev, day), ("Severity Level", "Day"))
 ```
-| Severity Level \ Day | 1 | 2 | 3 | 4 | 6 | 7 | 
+| Severity Level - Day | 1 | 2 | 3 | 4 | 6 | 7 | 
 | -------------------- | --- | --- | --- | --- | --- | --- | --- | 
 | 1 | 7 | 8 | 13 | 13 | 12 | 8 | 6 |
 | 2 | 29 | 30 | 33 | 35 | 37 | 38 | 38 |
