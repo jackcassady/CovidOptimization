@@ -63,58 +63,58 @@ Building our math model, we wanted to be able to find the maximum number of Covi
 
 Variable | Definition
 --- | ---
-$Gown_t$ | Number of patient gowns in inventory on day t  
-$Gown\_Order_t$ | Number of patient gowns ordered on day t  
-$Staff\_Gown_t$ |  Number of staff gowns in inventory on day t  
-$Staff\_Gown\_Order_t$ | Number of staff gowns ordered on day t  
-$Glove_t$ | Number of gloves in inventory on day t  
-$Glove\_Order_t$ | Number of gloves ordered on day t  
-$N95\_Mask_t$ | Number of N95 masks in inventory on day t  
-$N95\_Mask\_Order_t$ | Number of N95 masks ordered on day t  
-$Surg\_Mask_t$ | Number of surgical masks in inventory on day t  
-$Surg\_Mask\_Order_t$ | Number of surgical masks ordered on day t  
-$Shield_t$ | Number of face shields in inventory on day t  
-$Shield\_Order_t$ | Number of face shields ordered on day t  
-$Vent_t$ | Number of ventilators in inventory on day t  
-$Vent\_Order_t$ | Number of ventilators ordered on day t  
-$Fluid_t$ | Milliliters of fluid in inventory on day t  
-$Fluid\_Order_t$ | Milliliters of fluid ordered on day t  
-$N_t$ | Number of Nurses working on day t  
-$D_t$ | Number of Doctors working on day t  
-$N\_On_t$ | Number of Nurses called in on day t  
-$D\_On_t$ | Number of Doctors called in on day t  
-$N\_Off_t$ | Number of Nurses called off on day t  
-$D\_Off_t$ | Number of Doctors called off on day t  
+Gown_t | Number of patient gowns in inventory on day t  
+Gown\_Order_t | Number of patient gowns ordered on day t  
+Staff\_Gown_t |  Number of staff gowns in inventory on day t  
+Staff\_Gown\_Order_t | Number of staff gowns ordered on day t  
+Glove_t | Number of gloves in inventory on day t  
+Glove\_Order_t | Number of gloves ordered on day t  
+N95\_Mask_t | Number of N95 masks in inventory on day t  
+N95\_Mask\_Order_t | Number of N95 masks ordered on day t  
+Surg\_Mask_t | Number of surgical masks in inventory on day t  
+Surg\_Mask\_Order_t | Number of surgical masks ordered on day t  
+Shield_t | Number of face shields in inventory on day t  
+Shield\_Order_t | Number of face shields ordered on day t  
+Vent_t | Number of ventilators in inventory on day t  
+Vent\_Order_t | Number of ventilators ordered on day t  
+Fluid_t | Milliliters of fluid in inventory on day t  
+Fluid\_Order_t | Milliliters of fluid ordered on day t  
+N_t | Number of Nurses working on day t  
+D_t | Number of Doctors working on day t  
+N\_On_t | Number of Nurses called in on day t  
+D\_On_t | Number of Doctors called in on day t  
+N\_Off_t | Number of Nurses called off on day t  
+D\_Off_t | Number of Doctors called off on day t  
 
 ### 2.A.ii. Expressions Used ###
 
 Expression | Definition
 --- | ---
-$Staff_t$ | Total staff on day t
-$Tot\_Pat_t$ | Total number of patients seen on day t
-$Adm\_Pat_t$ | Number of admitted patients seen on day t
-$Gown\_Use_t$ | Number of patient gowns used on day t
-$Staff\_Gown\_Use_t$ | Number of staff gowns used on day t
-$Glove\_Use_t$ | Number of pairs of gloves used on day t
-$N95\_Mask\_Use_t$ | Number of N95 masks used on day t
-$Surg\_Mask\_Use_t$ | Number of surgical masks used on day t
-$Shield\_Use_t$ | Number of face shields used on day t
-$Fluid\_Use_t$ | Milliliters of fluid used on day t
-$Vent\_Use_t$ | Number of ventilators used on day t
+Staff_t | Total staff on day t
+Tot\_Pat_t | Total number of patients seen on day t
+Adm\_Pat_t | Number of admitted patients seen on day t
+Gown\_Use_t | Number of patient gowns used on day t
+Staff\_Gown\_Use_t | Number of staff gowns used on day t
+Glove\_Use_t | Number of pairs of gloves used on day t
+N95\_Mask\_Use_t | Number of N95 masks used on day t
+Surg\_Mask\_Use_t | Number of surgical masks used on day t
+Shield\_Use_t | Number of face shields used on day t
+Fluid\_Use_t | Milliliters of fluid used on day t
+Vent\_Use_t | Number of ventilators used on day t
 
 ### 2.A.iii. Other Variables Used ###
 
 Variable | Definition
 --- | ---
-$Pat\_4_t$ | Number of Severity 4 patients
-$Pat\_3_t$ | Number of Severity 3 patients
-$Pat\_2_t$ | Number of Severity 2 patients
-$Pat\_1_t$ | Number of Severity 1 patients
+Pat\_4_t | Number of Severity 4 patients
+Pat\_3_t | Number of Severity 3 patients
+Pat\_2_t | Number of Severity 2 patients
+Pat\_1_t | Number of Severity 1 patients
 
 
 ### 2.A.iv. Minimum Cost Model ###
 <img src="Min Cost Objective 1.png" width="800">
-<img src="Min Cost Objective 2.png" width="800">
+<img src="Min Cost Objective 2.png" width="700">
 
 ## 2.B. Max Flow Objective ##
 
@@ -122,7 +122,7 @@ $Pat\_1_t$ | Number of Severity 1 patients
 
 ### 2.B.i. Variable Definitions ###
 
-* $x_{ij}$: The total flow of patients through our treatment network
+* x_ij: The total flow of patients through our treatment network
 
 ### 2.B.ii. Other Definitions ###
 
@@ -130,11 +130,11 @@ Data | Definition
 --- | ---
 Nodes | Our set of treatment nodes
 Paths | Set of treatment paths that patients can take
-$cap_{ij}$ | Capacity of each path
-$c_{ij}$ | Cost of each node
+cap_ij | Capacity of each path
+c_ij | Cost of each node
 
 ### 2.B.iii. Maximum Flow Model ###
-<img src="Max Flow Objective.png" width="800">
+<img src="Max Flow Objective.png" width="500">
 
 ## 3. Solution ##
 
@@ -234,7 +234,7 @@ Breaking these numbers down we have that:
 * Average: 11
 * Standard Deviation: 4.504
 
-We used the average $\pm$ 1σ in order to find the upper and lower bounds for our new case generator, rounding the lower bound down to the nearest integer and rounding the upper bound up to the nearest integer giving us the bounds of $ 6 \le x \le 16 $ with x being the number of new cases each day.
+We used the average ± 1σ in order to find the upper and lower bounds for our new case generator, rounding the lower bound down to the nearest integer and rounding the upper bound up to the nearest integer giving us the bounds of 6 ≤ x ≤ 16 with x being the number of new cases each day.
 
 Then to break down the number of patients into their severities, we began by multiplying the number of daily cases by the percentage of Covid cases that require hospitalization. According the the CDC, the rate of hospitalization for Covid-19 is 130.1 per 100,000 population(19). Using the population of Dane County which is 529,843 we can estimate that roughly 689.33 people required hospitalization in Dane County and then dividing this by the number total number of cases in Dane county, 4,198(2). We find that our percentage of positive tests that require hospitalization is 16.42%.
 
