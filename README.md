@@ -255,7 +255,8 @@ x | P(x)
 
 These probabilities are what can then be used to determine the number of patients in each category of the 41 patients we currently have and the number of patients of each category for new admitted patients. Then the code for our daily demand schedule can be found below. 
 
-'''using Random, StatsBase, NamedArrays
+```
+using Random, StatsBase, NamedArrays
 
 
 # Creating an array of new cases each day based on the statisical data
@@ -336,4 +337,4 @@ end
 day = [1, 2, 3, 4, 5, 6, 7]
 sev = [1, 2, 3, 4]
 Patients = [pat_1; pat_2; pat_3; pat_4]
-demand = NamedArray(Patients, (sev, day), ("Severity Level", "Day"))'''
+demand = NamedArray(Patients, (sev, day), ("Severity Level", "Day"))```
