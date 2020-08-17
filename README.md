@@ -113,7 +113,8 @@ $Pat\_1_t$ | Number of Severity 1 patients
 
 
 ### 2.A.iv. Minimum Cost Model ###
-$$\begin{aligned} \underset{ \mathbb{}}{\text{minimize}}\qquad& \sum_{t \in days} 393.69*D_t \space + 180.47*N_t + 6.00*N95\_Mask\_Use_t + 0.50*Surg\_Mask\_Use_t + 25,000.00*Vent\_Use_t \\ & + 0.25*Glove\_Use_t + 4.15*Gown\_Use_t + 5.00*Shield\_Use_t + 5.00*Fluid\_Use_t + 2.00*Staff\_Gown\_Use_t\\ \text{subject to:}\qquad& Pat\_4_t \le 14D_t, \forall \space t \in days\\ & Pat\_3_t \le 14D_t, \forall \space t \in days\\ & Pat\_2_t \le 20D_t, \forall \space t \in days\\ & Pat\_4_t \le 2N_t, \forall \space t \in days\\ & Pat\_3_t \le 2N_t, \forall \space t \in days\\ & Pat\_2_t \le 4N_t, \forall \space t \in days\\ & Pat\_1_t \le 4N_t, \forall \space t \in days\\ & D_t = D_{t-1} + On\_D_t - Off\_D_t, \forall \space t \in days\\ & N_t = N_{t-1} + On\_N_t - Off\_N_t, \forall \space t \in days\\ \\ & Staff_t = D_t + N_t, \forall \space t \in days\\ & Tot\_Pat_t = Pat\_4_t + Pat\_3_t + Pat\_2_t + Pat\_1_t, \forall \space t \in days\\ & Adm\_Pat_t = Pat\_4_t + Pat\_3_t + Pat\_2_t, \forall \space t \in days\\ \\ & Adm\_Pat_t \le 102, \forall \space t \in days\\ & Gown\_Use_t = 20*Adm\_Pat_t, \forall \space t \in days\\ & Staff\_Gown\_Use_t = 20*Tot\_Pat_t, \forall \space t \in days\\ & Glove\_Use_t = 250*Tot\_Pat_t, \forall \space t \in days\\ & N95\_Mask\_Use_t = 6*Tot\_Pat_t, \forall \space t \in days\\ & Surg\_Mask\_Use_t = 10*Tot\_Pat_t, \forall \space t \in days\\ & Shield\_Use_t = Staff_t, \forall \space t \in days\\ & Fluid\_Use_t = 2,179*Adm\_Pat_t, \forall \space t \in days\\ & Vent\_Use_t = Pat\_4_t + Pat\_3_t, \forall \space t \in days\\ \\ & Gown_{t-1} + Gown\_Order_t = Gown\_Use_t + Gown_t, \forall \space t \in days\\ & Staff\_Gown_{t-1} + Staff\_Gown\_Order_t = Staff\_Gown\_Use_t + Staff\_Gown_t, \forall \space t \in days\\ & Glove_{t-1} + Glove\_Order_t = Glove\_Use_t + Glove_t, \forall \space t \in days\\ & N95\_Mask_{t-1} + N95\_Mask\_Order_t = N95\_Mask\_Use_t + N95\_Mask_t, \forall \space t \in days\\ & Surg\_Mask_{t-1} + Surg\_Mask\_Order_t = Surg\_Mask\_Use_t + Surg\_Mask_t, \forall \space t \in days\\ & Shield_{t-1} + Shield\_Order_t = Shield\_Use_t + Shield_t, \forall \space t \in days\\ & Fluid_{t-1} + Fluid\_Order_t = Fluid\_Use_t + Fluid_t, \forall \space t \in days\\ & Vent_{t-1} + Vent\_Order_t = Vent\_Use_t + Vent_t, \forall \space t \in days\\ \\& Gown_0 = 3,120\\ & Staff\_Gown_0 = 3,120\\ & Glove_0 = 39,000\\ & N95\_Mask_0 = 936\\ & Surg\_Mask_0 = 1560\\ & Shield_0 = 69\\ & Fluid_0 = 339,924\\ & Vent_0 = 16\\ & D_0 = 80\\ & N_0 = 160\\ \\ & Gown_t, Gown\_Order_t, Staff\_Gown_t, Staff\_Gown\_Order_t, Glove_t, Glove\_Order_t, N95\_Mask_t, N95\_Mask\_Order_t, \\ & Surg\_Mask_t, Surg\_Mask\_Order_t, Shield_t, Shield\_Order_t, Vent_t, Vent\_Order_t, Fluid_t, Fluid\_Order_t, N_t, D_t, N\_On_t, \\ & D\_On_t, N\_Off_t, D\_Off_t \ge 0, \forall \space t \in days\\ \end{aligned}$$
+<img src="Min Cost Objective 1" width="800">
+<img src="Min Cost Objective 2" width="800">
 
 ## 2.B. Max Flow Objective ##
 
@@ -133,8 +134,9 @@ $cap_{ij}$ | Capacity of each path
 $c_{ij}$ | Cost of each node
 
 ### 2.B.iii. Maximum Flow Model ###
-\begin{equation} \underset{ \mathbb{}}{\text{minimize}}\qquad& -\sum_{i \in Paths}\sum_{j \in Paths} c_{ij} * x_{ij}\\ \text{subject to:}\qquad& \sum_{j \in Nodes}x_{kj} = \sum_{i \in Nodes}x_{ik} && \forall \space k \in Nodes\\ & x_{ij} \le cap_{ij} && \forall \space (i,j) \in Paths\\ & x_{ij} \ge 0 && \forall \space (i,j) \in Paths\\ \end{equation}
-
+```math
+$$\begin{aligned} \underset{ \mathbb{}}{\text{minimize}}\qquad& -\sum_{i \in Paths}\sum_{j \in Paths} c_{ij} * x_{ij}\\ \text{subject to:}\qquad& \sum_{j \in Nodes}x_{kj} = \sum_{i \in Nodes}x_{ik} && \forall \space k \in Nodes\\ & x_{ij} \le cap_{ij} && \forall \space (i,j) \in Paths\\ & x_{ij} \ge 0 && \forall \space (i,j) \in Paths\\ \end{aligned}$$
+```
 ## 3. Solution ##
 
 ### 3.A. Set Up ###
