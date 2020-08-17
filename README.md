@@ -134,9 +134,8 @@ $cap_{ij}$ | Capacity of each path
 $c_{ij}$ | Cost of each node
 
 ### 2.B.iii. Maximum Flow Model ###
-```math
-$$\begin{aligned} \underset{ \mathbb{}}{\text{minimize}}\qquad& -\sum_{i \in Paths}\sum_{j \in Paths} c_{ij} * x_{ij}\\ \text{subject to:}\qquad& \sum_{j \in Nodes}x_{kj} = \sum_{i \in Nodes}x_{ik} && \forall \space k \in Nodes\\ & x_{ij} \le cap_{ij} && \forall \space (i,j) \in Paths\\ & x_{ij} \ge 0 && \forall \space (i,j) \in Paths\\ \end{aligned}$$
-```
+<img src="Max Flow Objective.png" width="800">
+
 ## 3. Solution ##
 
 ### 3.A. Set Up ###
