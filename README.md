@@ -587,6 +587,7 @@ set_optimizer_attribute(m, "OutputFlag", 0)
 
 ### 4.A. Max Flow Results ###
 
+```
 ========================================
 MAX FLOW OBJECTIVE
 ========================================
@@ -608,3 +609,101 @@ Flow on each arc:
     Admitted Patients Only in Need of Fluids: 30.0
     Patients on Ventillators Discharged: 17.0
     Patients only Needing Fluids Discharged: 30.0
+```
+The results of our max flow model show that we are able to treat a maximum of 50 patients through our system at a time, our patient treatment capacity is primarily constricted by the amount of patients we can have waiting at a time. If we were to increase this number we would be able to increase our maximum flow to 53 patients. 
+```
+========================================
+MIN COST OBJECTIVE
+========================================
+
+TOTAL COST
+========================================
+Cost: $6.45286224e6
+
+DAILY STAFF REQUIREMENT
+========================================
+Doctors needed each day: [2.0 2.0 2.0 2.0 2.0 2.0 2.0]
+Nurses needed each day: [8.0 8.0 9.0 9.0 10.0 10.0 10.0]
+
+DAILY CONSUMABLE USAGE
+========================================
+Gowns used each day: [840.0, 880.0, 940.0, 1000.0, 1040.0, 1080.0, 1100.0]
+Staff Gowns used each day: [980.0, 1040.0, 1200.0, 1260.0, 1280.0, 1240.0, 1220.0]
+Gloves used each day: [12250.0, 13000.0, 15000.0, 15750.0, 16000.0, 15500.0, 15250.0]
+N95 Masks used each day: [294.0, 312.0, 360.0, 378.0, 384.0, 372.0, 366.0]
+Surgical Masks used each day: [490.0, 520.0, 600.0, 630.0, 640.0, 620.0, 610.0]
+Shield used each day: [10.0 10.0 11.0 11.0 12.0 12.0 12.0]
+Ventilators used each day: [13.0, 14.0, 14.0, 15.0, 15.0, 16.0, 17.0]
+Fluids used each day: [91518.0, 95876.0, 102413.0, 108950.0, 113308.0, 117666.0, 119845.0]
+
+DAILY CONSUMABLE ORDER
+========================================
+Gowns ordered: [0.0 0.0 0.0 540.0 1040.0 1080.0 1100.0]
+Staff Gowns ordered: [0.0 0.0 100.0 1260.0 1280.0 1240.0 1220.0]
+Gloves ordered: [0.0 0.0 1250.0 15750.0 16000.0 15500.0 15250.0]
+N95 Masks ordered: [0.0 0.0 30.0 378.0 384.0 372.0 366.0]
+Surgical Masks ordered: [0.0 0.0 50.0 630.0 640.0 620.0 610.0]
+Shield ordered: [0.0 0.0 0.0 0.0 0.0 0.0 9.0]
+Ventilators ordered: [0.0 11.0 14.0 15.0 15.0 16.0 17.0]
+Fluids ordered: [0.0 0.0 0.0 58833.0 113308.0 117666.0 119845.0]
+
+DAILY CONSUMABLE INVENTORY
+========================================
+Gowns inventory: [2280.0 1400.0 460.0 0.0 0.0 0.0 0.0]
+Staff Gowns inventory: [2140.0 1100.0 0.0 0.0 0.0 0.0 0.0]
+Gloves inventory: [26750.0 13750.0 0.0 0.0 0.0 0.0 0.0]
+N95 Masks inventory: [642.0 330.0 0.0 0.0 0.0 0.0 0.0]
+Surgical Masks inventory: [1070.0 550.0 0.0 0.0 0.0 0.0 0.0]
+Shield inventory: [59.0 49.0 38.0 27.0 15.0 3.0 0.0]
+Ventilators inventory: [3.0 0.0 0.0 0.0 0.0 0.0 0.0]
+Fluids inventory: [248406.0 152530.0 50117.0 0.0 0.0 0.0 0.0]
+```
+From our minimum cost model we find that for our week of treatment it would cost roughly $6,452,862.24. Requiring 2 doctors and between 8 and 10 nurses each day. On average, we use the following amounts of supplies:
+
+PPE | Average Used (per day)
+--- | ---
+Gowns | 982.85
+Staff Gowns | 1,174.29
+Gloves | 14,678.57
+N95 masks | 352.29
+Surgical masks | 587.14
+Face Shields | 11.14
+Ventilators | 14.86
+Fluids | 107,082.29
+
+It is important to consider the limitation of shortages of supply. At this time, hospitals have been able to meet the need for supplies through different companies adapting their production rates to make more necessary and less unnecessary products. In order to keep meeting the demand as cases rise, companies need to continue mass-producing medical supplies to treat COVID-19. Otherwise, the reorder volume required will not be met. 
+
+However, there is an additional supply source that has not been considered. Makeshift supplies have been used by numerous hospitals to meet their demand. This includes beds, masks and other materials that can be made when a shortage problem arises. While it is better to meet the need with regulated supplies, these makeshift supplies and unaccounted donations should be considered as well. 
+
+Another important limitation is the assumption that no patients pass away or change severity levels. This assumption was made for the sake of simplicity for modelling, but is not realistic. With this complexity added, the model would be a more reasonable fit.
+
+The results of this model are sensitive to the assumptions made. For example, if the deaths were able to be accounted for, they would decrease the number of patients at a level 3 or 4 slightly. There is also the potential for more patients to hit a level 3 or 4 severity at a time, and require a ventilator. Because we based the model off an average number of patients at each level, we did not account for this factor. The model is also very sensitive to changing the amount of cases. This arises from the relatively small scale we defined our model to cover.
+
+## 5. Conclusion ##
+
+After generating a max flow with the total amount of ventilators both in inventory and ordered, we found that we were able to successfully treat all patients of level 3 and 4 severity who required one. Because patients of levels 1 and 2 severity don’t require ventilators, they aren’t a source of concern for this constraint. Ventilators were chosen as the constraint of interest as they are the limiting factor. Given that enough ventilators are present, all patients should be able to be treated. The numbers needed for all other supplies, nurses and doctors were calculated as well. Using our minimum cost model we were able to determine that our minimum cost to treat all of our covid patients was $6,452,862.24. This number is a rough estimate of the amount actually needed to treat covid patients in a hospital of our size as there are many outside factors that can be difficult to account for.
+
+This model can be made more complex and utilized in the future to determine if the amount of supplies a hospital has will be enough to handle the influx of patients. In order to do so, the number of cases and proportions would have to be updated. In addition, if a different item were to become the limiting factor, the max flow could be adapted to the data for that item. The model could also be programmed to update automatically based on changing amounts of cases, as well as used to predict the amount of supplies needed in the near future that way. This could become a helpful tool for hospitals to allocate their resources, and if implemented globally, could help eliminate shortages by both limiting hospitals from hoarding supplies that they will not need in the near future and notifying other hospitals of how many more and what types of supplies they require.
+
+As discussed in the limitations, the non-changing levels of patient severity and lack of accounting for deaths makes this model extremely simplistic, and doesn’t give a realistic solution for hospitals. Another dimension would have to be added, most likely to the current network flow to account for changing levels in order to implement this model in hospitals.
+
+## 6. References ##
+1. “COVID-19 Resources for Healthcare Providers: University Health System.” Hospital & Outpatient Clinics in San Antonio, www.universityhealthsystem.com/coronavirus-covid19/healthcare-protocols-and-guidelines.
+2. “COVID-19: Facility-Wide Public Health Investigations.” Wisconsin Department of Health Services, 5 Aug. 2020, www.dhs.wisconsin.gov/covid-19/investigations.htm.
+3. “COVID-19: Symptoms of Illness.” Wisconsin Department of Health Services, 7 Aug. 2020, www.dhs.wisconsin.gov/covid-19/symptoms.htm.
+4. Danbeck, Jackson, et al. “Local Hospital Says Federal Help Not Enough, Asks for Donations of Medical Supplies.” Https://Www.nbc15.Com, www.nbc15.com/content/news/Local-hospital-asks-for--569125861.html.
+5. “Emergency Preparedness: University Health System.” Hospital & Outpatient Clinics in San Antonio, www.universityhealthsystem.com/coronavirus-covid19/emergency-preparedness.
+6. “Lippincott Nursing Education.” Wolters Kluwer, www.wolterskluwer.com/en/solutions/lippincott-nursing-faculty.
+7. “Management of Patients with Confirmed 2019-NCoV.” Centers for Disease Control and Prevention, Centers for Disease Control and Prevention, www.cdc.gov/coronavirus/2019-ncov/hcp/clinical-guidance-management-patients.html.
+8. “Revamp Standard Precautions for Infection Preventionists.” Infection Control Today, www.infectioncontroltoday.com/view/revamp-standard-precautions-for-infection-preventionists.
+9. University of Wisconsin Hospitals and Clinics Authority. “UW Health Expands COVID-19 Testing.” UW Health, www.uwhealth.org/news/uw-health-expands-covid-19-testing-w/53352.
+10. “Wisconsin Hospitals.” WISCONSIN Hospitals by County, www.wisconline.com/counties/WI_hospitals.html.
+11. administrator, JHCHS website. “Personal Protective Equipment (PPE) Assumptions.” Johns Hopkins Center for Health Security, 20 Apr. 2020, www.centerforhealthsecurity.org/resources/COVID-19/PPE/PPE-assumptions.
+12. Weber, David Ollier. “How Many Patients Can a Primary Care Physician Treat?” American Association for Physician Leadership, www.physicianleaders.org/news/how-many-patients-can-primary-care-physician-treat.
+13. Gershengorn , Hayley. “The Goldilocks Dilemma. How Much Work Is ‘Just Right’ for the Intensivist?” Annals of the American Thoracic Society, 2016, www.atsjournals.org/doi/full/10.1513/AnnalsATS.201601-045ED.
+14. “Lippincott Nursing Education.” Wolters Kluwer, www.wolterskluwer.com/en/solutions/lippincott-nursing-faculty.
+15. Malbrain, Prof. Manu L.N.G., et al. “Thoughts on COVID-19 from the International Fluid Academy.” HealthManagement, 6 Aug. 2020, healthmanagement.org/c/icu/issuearticle/thoughts-on-covid-19-from-the-international-fluid-academy.
+16. Malthus, TR., et al. “The Weight of Nations: an Estimation of Adult Human Biomass.” BMC Public Health, BioMed Central, 1 Jan. 2005, bmcpublichealth.biomedcentral.com/articles/10.1186/1471-2458-12-439.
+17. “COVID-19: Hospital Capabilities.” Wisconsin Department of Health Services, 29 July 2020, www.dhs.wisconsin.gov/covid-19/hosp-data.htm.
+18. “Coronavirus (COVID-19).” Google News, Google, 2020, news.google.com/covid19/map?hl=en-US.
+19. “COVIDView: A Weekly Surveillance Summary of U.S. COVID-19 Activity.” Centers for Disease Control and Prevention, Centers for Disease Control and Prevention, www.cdc.gov/coronavirus/2019-ncov/covid-data/covidview/index.html.
